@@ -6,3 +6,5 @@ You don't need a computer science background to participate - just a little prog
 
 If you'd like to support Advent of Code, you can do so indirectly by helping to [Shareon Twitter Mastodon] it with others, or directly via PayPal or Coinbase.
 
+https://adventofcode.com/2022
+

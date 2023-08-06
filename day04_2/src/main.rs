@@ -101,7 +101,4 @@ fn read_lines(filename: &str) -> Vec<String> {
 		.map(String::from)  // make each slice into a string
 		.collect()  // gather them together into a vector
 }
-// Note that in both examples above,
-// we must convert the &str reference returned from lines() to the owned type String,
-// using .to_string() and String::from respectively.
 
