@@ -91,11 +91,19 @@ fn main() {
 				let move_from:usize    = explode[3].parse::<usize>().unwrap() - 1;
 				let move_to:usize      = explode[5].parse::<usize>().unwrap() - 1;
 				println!("{} move(s)\tfrom {}\tto {}", move_nn, move_from, move_to);
+				let mut tmp: Vec<char> = Vec::new();
 				for _i in 0..move_nn {
 					if let Some(item) = stack[move_from].pop() {
+						tmp.push(item);
+					}
+				}
+
+				for _i in 0..move_nn {
+					if let Some(item) = tmp.pop() {
 						stack[move_to].push(item);
 					}
 				}
+
 			}
 		}
 
