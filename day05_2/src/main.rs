@@ -9,13 +9,10 @@ fn main() {
 		Move
 	}
 
-	let mut phase: Part = Part::Crates;
-
+	let mut phase: Part              = Part::Crates;
 	let mut crates_txt: Vec<&String> = Vec::new();
-
-	let mut number_of_stack: u32 = 0;
-
-	let mut stack: Vec<Vec<char>> = Vec::new();
+	let mut number_of_stack: u32     = 0;
+	let mut stack: Vec<Vec<char>>    = Vec::new();
 
 	// File `crates.txt` must exist in the current path
 	let lines:Vec<String> = read_lines("./crates.txt");
@@ -33,10 +30,13 @@ fn main() {
 					}
 
 					println!("'{}'", line);
-					number_of_stack = line.len() as u32;
+					//number_of_stack = line.len() as u32;
+
+					// extract last number from the line
+					// ' 1   2   3 '  ->  3
 					let explode: Vec<&str> = line.trim().split(" ").collect();
 					if let Some(last) = explode.last() {
-						if let Ok(n)= (*last).parse::<u32>() {
+						if let Ok(n) = (*last).parse::<u32>() {
 							number_of_stack = n;
 							println!("\nNbr of stacks = {}", number_of_stack);
 							println!("");
@@ -52,15 +52,16 @@ fn main() {
 				//println!("Stacks");
 				//println!("'{}'", line);
 				if line.is_empty() {
-					// '    [D]    '
-					// '[N] [C]    '
-					// '[Z] [M] [P]'
 
-					// Transform text to data
+					// initialize stack Vector
 					for _i in 0..number_of_stack {
 						stack.push(Vec::new());
 					}
 
+					// Extract data from text
+					// '    [D]    '
+					// '[N] [C]    '
+					// '[Z] [M] [P]'
 					for level in crates_txt.iter().rev() {
 						//println!("'{}'", level);
 
@@ -75,7 +76,6 @@ fn main() {
 					}
 
 					//println!("{:?}", stack);
-
 					phase = Part::Move;
 					continue 'empty;
 				}
@@ -91,6 +91,7 @@ fn main() {
 				let move_from:usize    = explode[3].parse::<usize>().unwrap() - 1;
 				let move_to:usize      = explode[5].parse::<usize>().unwrap() - 1;
 				println!("{} move(s)\tfrom {}\tto {}", move_nn, move_from, move_to);
+
 				let mut tmp: Vec<char> = Vec::new();
 				for _i in 0..move_nn {
 					if let Some(item) = stack[move_from].pop() {
