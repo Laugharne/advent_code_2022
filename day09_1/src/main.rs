@@ -111,53 +111,70 @@ fn main() {
 
 	println!();
 
-	let nn_movements: i32 = movements.len() as i32;
+	let nn_movements: usize = movements.len();
 	let mut x_h: u32 = x_start;
 	let mut y_h: u32 = y_start;
 	let mut x_t: u32 = x_start;
 	let mut y_t: u32 = y_start;
 
-	for mv in -1..nn_movements {
-		if mv < 0 {
-			println!("== Initial State ==");
-			map[y_start as usize][x_start as usize].symbol = 's';
-			display_map( &map);
-		} else {
-			let movement: &Move = &movements[mv as usize];
-			println!("== {} {} ==", movement.direction, movement.step);
+	map[y_start as usize][x_start as usize].symbol = 's';
+	map[y_start as usize][x_start as usize].layer += 1;
+	
+	println!("== Initial State ==");
+	display_map( &map, true);
 
-			let mut x_h_new = x_h;
-			let mut y_h_new = y_h;
+	for mv in 0..nn_movements {
+		let movement: &Move = &movements[mv as usize];
+		println!("== {} {} ==", movement.direction, movement.step);
+
+		let mut x_h_new = x_h;
+		let mut y_h_new = y_h;
+
+		for step in 0..movement.step {
+			match movement.direction {
+				'U' => { y_h_new -=1; },
+				'D' => { y_h_new +=1; },
+				'L' => { x_h_new -=1; },
+				'R' => { x_h_new +=1; },
+				_ => {},
+			}
+
 			let mut x_t_new = x_t;
 			let mut y_t_new = y_t;
 
-			for step in 0..movement.step {
-				match movement.direction {
-					'U' => { y_h_new -=1; },
-					'D' => { y_h_new +=1; },
-					'L' => { x_h_new -=1; },
-					'R' => { x_h_new +=1; },
-					_ => {},
+			let x_delta = (x_h_new as i32) - (x_t_new as i32);
+			let y_delta = (y_h_new as i32) - (y_t_new as i32);
+
+			if x_delta.abs() > 1 || y_delta.abs() > 1 {
+
+				if x_t_new < x_h_new {
+					x_t_new += 1;
+				} else if x_t_new > x_h_new {
+					x_t_new -= 1;
 				}
 
-				// TODO
-				
-				map[y_h as usize][x_h as usize].symbol = '.';
-				map[y_t as usize][x_t as usize].symbol = '.';
-
-				map[y_start as usize][x_start as usize].symbol = 's';
-				map[y_t_new as usize][x_t_new as usize].symbol = 'T';  // `T` covers `s`
-				map[y_h_new as usize][x_h_new as usize].symbol = 'H';  // `H` covers `T` and `s`
-
-				x_h = x_h_new;
-				y_h = y_h_new;
-				x_t = x_t_new;
-				y_t = y_t_new;
-		
-				// Display trace `H` & `T`
-				display_map( &map);
-			
+				if y_t_new < y_h_new {
+					y_t_new += 1;
+				} else if y_t_new > y_h_new {
+					y_t_new -= 1;
+				}
 			}
+
+			map[y_h as usize][x_h as usize].symbol = '.';
+			map[y_t as usize][x_t as usize].symbol = '.';
+
+			map[y_start as usize][x_start as usize].symbol = 's';
+			map[y_t_new as usize][x_t_new as usize].symbol = 'T';  // `T` covers `s`
+			map[y_h_new as usize][x_h_new as usize].symbol = 'H';  // `H` covers `T` and `s`
+			map[y_t_new as usize][x_t_new as usize].layer += 1;
+
+			x_h = x_h_new;
+			y_h = y_h_new;
+			x_t = x_t_new;
+			y_t = y_t_new;
+	
+			// Display trace `H` & `T`
+			display_map( &map, false);
 
 		}
 
@@ -185,7 +202,8 @@ fn main() {
 }
 
 
-fn display_map(map: &Vec<Vec<Trace>>) {
+fn display_map(map: &Vec<Vec<Trace>>, display: bool) {
+	if !display { return }
 	map.iter().for_each(|line| {
 		line.iter().for_each(|cell| {
 			print!(" {}", cell.symbol);
